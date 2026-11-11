@@ -224,6 +224,10 @@
     .dishes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .dish { padding: 16px 18px 18px; border: 1.5px solid rgba(210, 40, 46, .28); border-radius: 6px; background: #FBF7F1; position: relative; }
     .dish.is-fav { background: #FCE7BE; border-color: var(--yellow-deep); }
+    .dish.has-img { display: grid; grid-template-columns: 104px 1fr; gap: 16px; align-items: center; padding: 12px 18px 12px 12px; }
+    .dish-img { width: 104px; height: 104px; object-fit: cover; border-radius: 6px; background: var(--sand); box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px rgba(210, 40, 46, .25); transition: transform .2s; }
+    .dish:hover .dish-img { transform: rotate(-2deg) scale(1.04); }
+    .dish-body { min-width: 0; }
     .dish-line { display: flex; align-items: baseline; gap: 10px; }
     .dish-name { font-family: var(--sans); font-weight: 800; font-size: 16.5px; letter-spacing: .02em; text-transform: uppercase; color: var(--red); line-height: 1.2; }
     .leader { flex: 1; height: 6px; background: var(--slashes); color: var(--yellow); opacity: .75; align-self: center; min-width: 20px; }
@@ -259,6 +263,8 @@
       .cat-head { padding: 20px 20px 26px; }
       .dish { padding: 14px 14px 16px; }
       .dish-name { font-size: 15.5px; }
+      .dish.has-img { grid-template-columns: 84px 1fr; gap: 14px; padding: 10px 14px 10px 10px; }
+      .dish-img { width: 84px; height: 84px; }
     }
 
     /* ---------- story ---------- */
