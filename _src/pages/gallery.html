@@ -1,0 +1,31 @@
+    <section class="page-hero">
+      <div class="wrap">
+        <p class="kicker">Galería</p>
+        <h1><span class="script">Buen provecho</span>From Our Kitchen</h1>
+        <p>The plates we're proud of and the room where we serve them. Tap any photo to see it bigger.</p>
+      </div>
+    </section>
+
+    <section class="section gallery-sec" aria-label="Photo gallery">
+      <div class="wrap">
+        <div class="gal-filters" role="group" aria-label="Filter photos">
+          <button type="button" class="on" data-f="all">All</button>
+          <button type="button" data-f="pollo">Pollo</button>
+          <button type="button" data-f="criollo">Criollo &amp; Chifa</button>
+          <button type="button" data-f="mar">Mariscos</button>
+          <button type="button" data-f="sopas">Sopas &amp; Bowls</button>
+          <button type="button" data-f="dulce">Postres &amp; Drinks</button>
+          <button type="button" data-f="casa">The Restaurant</button>
+        </div>
+        <div class="gallery" id="gallery">
+{{GALLERY_GRID}}
+        </div>
+      </div>
+    </section>
+
+    <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+      <button type="button" class="lb-close" aria-label="Close">&times;</button>
+      <button type="button" class="lb-prev" aria-label="Previous photo">&lsaquo;</button>
+      <figure><img alt=""><figcaption></figcaption></figure>
+      <button type="button" class="lb-next" aria-label="Next photo">&rsaquo;</button>
+    </dialog>
