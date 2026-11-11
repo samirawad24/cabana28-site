@@ -22,6 +22,19 @@ HOURS = [  # (label, days for schema, open, close)
 
 e = html.escape
 
+# Dishes with raw or undercooked fish (Florida / FDA Food Code consumer advisory)
+RAW = {"Causa Acevichada", "Leche de Tigre Cabaña", "Vuelve a la Vida", "Ceviche Tradicional",
+       "Ceviche de Ají Amarillo", "Ceviche de Rocoto", "Ceviche Mixto", "Ceviche Cabaña 28", "Leche de Tigre"}
+
+STRIP_A = ["Pollo a la Brasa", "Lomo Saltado", "Ceviche", "Ají de Gallina", "Chaufa", "Papa a la Huancaína",
+           "Anticuchos", "Jalea", "Tallarín Saltado", "Picarones", "Chicha Morada"]
+STRIP_B = ["Ven con hambre", "Pollo a la Brasa", "Comida de casa", "Parihuela", "Buen provecho",
+           "Suspiro a la Limeña", "La mesa está servida", "Causa", "Inca Kola"]
+
+
+def strip(words):
+    return "<ul>" + "".join(f"<li>{e(w)}</li>" for w in words) + "</ul>"
+
 
 def money(p):
     return f"${p:,.2f}"
@@ -33,12 +46,13 @@ def build_menu():
         tabs.append(f'<a href="#m-{slug}" data-tab="{slug}">{e(en)}</a>')
         rows = []
         for name, desc, price, popular in items:
+            raw = '<span class="raw" title="Served raw or undercooked. See food safety notice.">*</span>' if name in RAW else ""
             fav = '<span class="fav">House favorite</span>' if popular else ""
             p = money(price) if price is not None else f'<a href="{PICKUP}" class="opts">Options</a>'
             d = f'<p class="dish-desc">{e(desc)}</p>' if desc else ""
             rows.append(
                 f'<li class="dish" data-search="{e((name + " " + desc).lower())}">'
-                f'<div class="dish-line"><h4 class="dish-name">{e(name)}</h4>'
+                f'<div class="dish-line"><h4 class="dish-name">{e(name)}{raw}</h4>'
                 f'<span class="leader" aria-hidden="true"></span><span class="dish-price">{p}</span></div>'
                 f'{fav}{d}</li>'
             )
@@ -111,13 +125,27 @@ def fmt(t):
     return f"{h}:{m:02d}{suf}" if m else f"{h}{suf}"
 
 
+def finish(out, preview):
+    if preview:
+        out = out.replace('src="images/', 'src="../images/')
+        out = out.replace('content="index, follow"', 'content="noindex, nofollow"')
+    return out
+
+
 def main():
+    import sys
+    import legal
+    preview = "--preview" in sys.argv
+    dest = ROOT / "v2" if preview else ROOT
+    dest.mkdir(exist_ok=True)
     tabs, sections = build_menu()
     rjson, fjson = schema()
     count = sum(len(c[4]) for c in MENU)
     tpl = (ROOT / "_src" / "template.html").read_text(encoding="utf-8")
     out = (tpl.replace("{{MENU_TABS}}", tabs)
               .replace("{{MENU_SECTIONS}}", sections)
+              .replace("{{STRIP_A}}", strip(STRIP_A))
+              .replace("{{STRIP_B}}", strip(STRIP_B))
               .replace("{{SCHEMA_RESTAURANT}}", rjson)
               .replace("{{SCHEMA_FAQ}}", fjson)
               .replace("{{FAQ}}", faq_html())
@@ -127,8 +155,12 @@ def main():
               .replace("{{TEL}}", TEL).replace("{{PHONE}}", PHONE)
               .replace("{{SITE}}", SITE))
     assert "{{" not in out, "unreplaced placeholder"
-    (ROOT / "index.html").write_text(out, encoding="utf-8")
-    print(f"built index.html: {len(MENU)} categories, {count} dishes")
+    (dest / "index.html").write_text(finish(out, preview), encoding="utf-8")
+    lp = legal.pages(TEL, PHONE)
+    for slug, (title, body) in lp.items():
+        page = legal.render(tpl, SITE, PICKUP, TEL, PHONE, slug, title, body)
+        (dest / f"{slug}.html").write_text(finish(page, preview), encoding="utf-8")
+    print(f"built {dest}: {len(MENU)} categories, {count} dishes, {len(lp)} legal pages")
 
 
 if __name__ == "__main__":
