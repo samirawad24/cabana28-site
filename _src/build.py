@@ -40,8 +40,6 @@ def money(p):
     return f"${p:,.2f}"
 
 
-CAT_COLORS = ["#C2161E", "#2F6F6A", "#2A1D17", "#A23D63", "#7D5719"]
-
 # Photo panels dropped into the menu after these categories
 BREAKS = {
     "family": ("images/pollo-a-la-brasa.jpg", 760, 500, "#2F6F6A", "Pollo a la Brasa",
@@ -70,12 +68,11 @@ def menu_break(img, w, h, color, title, text, label, price, raw):
 def build_menu():
     tabs, sections = [], []
     for i, (slug, es, en, note, items) in enumerate(MENU):
-        color = CAT_COLORS[i % len(CAT_COLORS)]
         tabs.append(f'<a href="#m-{slug}" data-tab="{slug}">{e(en)}</a>')
         rows = []
         for name, desc, price, popular in items:
             raw = '<span class="raw" title="Served raw or undercooked. See food safety notice.">*</span>' if name in RAW else ""
-            fav = '<span class="fav">House favorite</span>' if popular else ""
+            fav = '<span class="fav">Our fav</span>' if popular else ""
             p = money(price) if price is not None else f'<a href="{PICKUP}" class="opts">Options</a>'
             d = f'<p class="dish-desc">{e(desc)}</p>' if desc else ""
             rows.append(
@@ -86,7 +83,7 @@ def build_menu():
             )
         n = f'<p class="cat-note">{e(note)}</p>' if note else ""
         sections.append(
-            f'<section class="cat" id="m-{slug}" data-cat="{slug}" style="--c:{color}">'
+            f'<section class="cat{" alt" if i % 2 else ""}" id="m-{slug}" data-cat="{slug}">'
             f'<header class="cat-head"><h3>{e(es)}</h3><span class="cat-en">{e(en)}</span>{n}</header>'
             f'<ul class="dishes">{"".join(rows)}</ul></section>'
         )
