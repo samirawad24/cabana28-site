@@ -40,53 +40,77 @@ def money(p):
     return f"${p:,.2f}"
 
 
-CAT_COLORS = ["#C2161E", "#2F6F6A", "#2A1D17", "#A23D63", "#7D5719"]
-
 # Photo panels dropped into the menu after these categories
+# (img, w, h, title, text, dish name whose price is shown)
 BREAKS = {
-    "family": ("images/pollo-a-la-brasa.jpg", 760, 500, "#2F6F6A", "Pollo a la Brasa",
+    "appetizers": ("images/menu/causa-acevichada-lg.jpg", 1200, 1202, "Causa Acevichada",
+                   "Cold whipped potato with ají amarillo and avocado, crowned with fresh ceviche. A classic way to start.",
+                   "Causa Acevichada"),
+    "family": ("images/pollo-a-la-brasa.jpg", 760, 500, "Pollo a la Brasa",
                "Marinated overnight and roasted on the spit until the skin crackles. Get the whole bird with two sides for the table.",
-               "Whole chicken, 2 sides", 26.95, False),
-    "peruvian": ("images/lomo-saltado.jpg", 1600, 1200, "#C2161E", "Lomo Saltado",
+               "Whole Chicken, 2 Sides"),
+    "peruvian": ("images/lomo-saltado.jpg", 1600, 1200, "Lomo Saltado",
                  "Tenderloin, red onion and tomato hit a screaming hot wok, then meet the fries and rice. One of our most ordered plates.",
-                 "Lomo Saltado", 24.99, False),
-    "seafood": ("images/ceviche-mixto.jpg", 1600, 2133, "#A23D63", "Ceviche Mixto",
+                 "Lomo Saltado"),
+    "seafood": ("images/ceviche-mixto.jpg", 1600, 2133, "Ceviche Mixto",
                 "Fish, shrimp and calamari cured in fresh lime leche de tigre, with cancha, corn and sweet potato.",
-                "Ceviche Mixto", 19.99, True),
+                "Ceviche Mixto"),
+    "pastas": ("images/menu/tallarin-saltado-de-carne-lg.jpg", 1200, 673, "Tallarín Saltado",
+               "Spaghetti thrown into the wok with beef, onion and tomato. Chifa-style comfort food.",
+               "Tallarín Saltado de Carne"),
+    "bowls": ("images/menu/brasa-bowl-lg.jpg", 1200, 1200, "Brasa Bowl",
+              "Rotisserie chicken over rice and black beans with house salad and pico de gallo. Lunch, sorted.",
+              "Brasa Bowl"),
+    "soups": ("images/menu/parihuela-lg.jpg", 1200, 673, "Parihuela",
+              "A rich, spicy seafood soup with half a fried fish and rice on the side. Big enough to share.",
+              "Parihuela"),
+    "kids": ("images/menu/picarones-lg.jpg", 1200, 673, "Picarones",
+             "Warm Peruvian doughnuts drizzled with spiced syrup. Save room.",
+             "Picarones"),
 }
+PRICES = {n: pr for *_, items in MENU for n, _, pr, _ in items}
 
 
-def menu_break(img, w, h, color, title, text, label, price, raw):
-    star = '<span class="raw">*</span>' if raw else ""
+def menu_break(img, w, h, title, text, dish):
+    star = '<span class="raw">*</span>' if dish in RAW else ""
     return (
-        f'<aside class="mbreak" style="--c:{color}">'
+        f'<aside class="mbreak">'
         f'<img src="{img}" alt="{e(title)} at Cabaña 28" width="{w}" height="{h}" loading="lazy">'
         f'<div class="mbreak-text"><p class="mbreak-k">De nuestra cocina</p><h3>{e(title)}{star}</h3>'
-        f'<p>{e(text)}</p><div class="mbreak-foot"><span>{e(label)} &middot; <b>{money(price)}</b></span>'
+        f'<p>{e(text)}</p><div class="mbreak-foot"><span>{e(dish)} &middot; <b>{money(PRICES[dish])}</b></span>'
         f'<a class="btn mbreak-btn" href="{PICKUP}">Order</a></div></div></aside>'
     )
+
+
+def photo(name):
+    """Thumbnail from images/menu/ (downloaded by fetch_photos.py), if we have one."""
+    from fetch_photos import slug
+    f = f"images/menu/{slug(name)}.jpg"
+    if not (ROOT / f).exists():
+        return ""
+    return f'<img class="dish-img" src="{f}" alt="{e(name)}" width="360" height="360" loading="lazy" decoding="async">'
 
 
 def build_menu():
     tabs, sections = [], []
     for i, (slug, es, en, note, items) in enumerate(MENU):
-        color = CAT_COLORS[i % len(CAT_COLORS)]
         tabs.append(f'<a href="#m-{slug}" data-tab="{slug}">{e(en)}</a>')
         rows = []
         for name, desc, price, popular in items:
             raw = '<span class="raw" title="Served raw or undercooked. See food safety notice.">*</span>' if name in RAW else ""
-            fav = '<span class="fav">House favorite</span>' if popular else ""
+            fav = '<span class="fav">Our fav</span>' if popular else ""
             p = money(price) if price is not None else f'<a href="{PICKUP}" class="opts">Options</a>'
             d = f'<p class="dish-desc">{e(desc)}</p>' if desc else ""
+            img = photo(name)
             rows.append(
-                f'<li class="dish{" is-fav" if popular else ""}" data-search="{e((name + " " + desc).lower())}">'
-                f'<div class="dish-line"><h4 class="dish-name">{e(name)}{raw}</h4>'
+                f'<li class="dish{" is-fav" if popular else ""}{" has-img" if img else ""}" data-search="{e((name + " " + desc).lower())}">'
+                f'{img}<div class="dish-body"><div class="dish-line"><h4 class="dish-name">{e(name)}{raw}</h4>'
                 f'<span class="leader" aria-hidden="true"></span><span class="dish-price">{p}</span></div>'
-                f'{fav}{d}</li>'
+                f'{fav}{d}</div></li>'
             )
         n = f'<p class="cat-note">{e(note)}</p>' if note else ""
         sections.append(
-            f'<section class="cat" id="m-{slug}" data-cat="{slug}" style="--c:{color}">'
+            f'<section class="cat{" alt" if i % 2 else ""}" id="m-{slug}" data-cat="{slug}">'
             f'<header class="cat-head"><h3>{e(es)}</h3><span class="cat-en">{e(en)}</span>{n}</header>'
             f'<ul class="dishes">{"".join(rows)}</ul></section>'
         )

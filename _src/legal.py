@@ -91,7 +91,7 @@ def render(tpl, site, pickup, tel, phone, slug, title, body):
         <a href="index.html#story">Our Story</a>
         <a href="index.html#visit">Hours &amp; Location</a>
       </nav>
-      <a class="brand" href="index.html" aria-label="Cabaña 28 home"><img src="images/cabana28-logo.png" alt="Cabaña 28" width="640" height="415"></a>
+      <a class="brand" href="index.html" aria-label="Cabaña 28 home"><img src="images/cabana28-logo.svg" alt="Cabaña 28" width="287" height="186"></a>
       <div class="nav nav-r">
         <a class="btn btn-line nav-call" href="{tel}">Call</a>
         <a class="btn btn-red" href="{pickup}">Order Pickup</a>
@@ -108,7 +108,7 @@ def render(tpl, site, pickup, tel, phone, slug, title, body):
   <footer>
     <div class="wrap">
       <div>
-        <img src="images/cabana28-logo.png" alt="Cabaña 28" width="640" height="415" style="height:64px;width:auto" loading="lazy">
+        <img src="images/cabana28-logo.svg" alt="Cabaña 28" width="287" height="186" style="height:64px;width:auto" loading="lazy">
         <p style="margin:6px 0 0">6351 N Andrews Ave, Fort Lauderdale, FL 33309 &middot; <a href="{tel}">{phone}</a></p>
       </div>
       <nav aria-label="Footer">
