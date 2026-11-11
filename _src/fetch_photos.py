@@ -51,6 +51,19 @@ ALIAS = {
     "Espresso": "Expresso",
     "Chaufa Rice": "Chaufa",
 }
+# gallery page: dish -> filter tag (downloaded larger into images/gallery/)
+GALLERY = {
+    "Lomo Saltado": "criollo", "Whole Chicken, 2 Sides": "pollo", "Ceviche Mixto": "mar", "Parrilla Cabaña": "pollo",
+    "Causa Acevichada": "mar", "Chaufa de Mariscos": "criollo", "Lomo Saltado a lo Pobre": "criollo", "Jalea": "mar",
+    "Brasa Bowl": "sopas", "Ají de Gallina": "criollo", "Leche de Tigre Cabaña": "mar", "Parrilla Grill": "pollo",
+    "Tallarín Saltado de Carne": "criollo", "Parihuela": "sopas", "Picarones": "dulce", "Ceviche Cabaña 28": "mar",
+    "Anticucho de Corazón": "criollo", "Chaufa Mar y Tierra": "criollo", "Pulpo a la Parrilla": "mar",
+    "Sopa a la Minuta": "sopas", "Pasta Huancaína con Lomo Saltado": "criollo", "Bowl Cabaña": "sopas",
+    "Arroz con Mariscos": "mar", "Suspiro a la Limeña": "dulce", "Tequeños de Lomo Saltado": "criollo",
+    "Pollo a la Plancha": "pollo", "Trío Sin Culpa": "criollo", "Aguadito de Pollo": "sopas", "Shrimp Bowl": "sopas",
+    "Pan con Chicharrón": "criollo", "Saltado Burger": "pollo", "Pescado en Salsa de Mariscos": "mar",
+    "Chicha Morada": "dulce", "Alfajor": "dulce", "Salchipapas": "pollo", "Empanadas": "criollo",
+}
 # large versions for the photo panels in the menu
 LARGE = ["Causa Acevichada", "Tallarín Saltado de Carne", "Parihuela", "Brasa Bowl", "Jalea", "Suspiro a la Limeña",
          "Chaufa de Mariscos", "Aguadito de Pollo", "Picarones", "Parrilla Cabaña"]
@@ -92,6 +105,11 @@ def main():
                 dest.write_bytes(get(url + "?tr=w-360,h-360,fo-auto,f-jpg,q-72"))
             if name in LARGE and not (OUT / f"{slug(name)}-lg.jpg").exists():
                 (OUT / f"{slug(name)}-lg.jpg").write_bytes(get(url + "?tr=w-1200,f-jpg,q-78"))
+            if name in GALLERY:
+                g = ROOT / "images" / "gallery" / f"{slug(name)}.jpg"
+                g.parent.mkdir(parents=True, exist_ok=True)
+                if not g.exists():
+                    g.write_bytes(get(url + "?tr=w-1000,f-jpg,q-78"))
             done += 1
     print(f"{done} dishes with photos; no photo for: {', '.join(sorted(set(missing)))}")
 

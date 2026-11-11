@@ -1,0 +1,44 @@
+    <section class="page-hero">
+      <div class="wrap">
+        <p class="kicker">La carta</p>
+        <h1><span class="script">The</span>Full Menu</h1>
+        <p>Pollo a la brasa, criollo classics, ceviches, chaufa and more. Every price matches our online ordering.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-yellow" href="{{DELIVERY}}">{{ICON_BAG}} Order Delivery</a>
+          <a class="btn btn-line" href="{{TEL}}">Call {{PHONE}}</a>
+        </div>
+      </div>
+    </section>
+    <section class="menu" id="menu" aria-labelledby="menu-title">
+      <div class="wrap">
+        <div class="menu-intro">
+          <div>
+            <h2 id="menu-title">Eat Peruvian<span class="thin">{{DISH_COUNT}} dishes, {{CAT_COUNT}} categories</span></h2>
+            <p>Prices match our online ordering. Questions about a dish? Call us at <a href="{{TEL}}">{{PHONE}}</a>.</p>
+          </div>
+          <label class="search">
+            <span class="sr">Search the menu</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="q" placeholder="Search: ceviche, chaufa, kids..." autocomplete="off">
+          </label>
+        </div>
+        <div class="tabs">
+          <nav aria-label="Menu categories" id="tabs">
+{{MENU_TABS}}
+          </nav>
+        </div>
+        <div id="menu-body">
+{{MENU_SECTIONS}}
+        </div>
+        <p class="no-results" id="none">Nothing matches that. Try another word, or call us and ask.</p>
+        <div class="menu-foot">
+          <p><strong>Ready to order?</strong> We deliver through our own ordering page, or pick it up.</p>
+          <a class="btn btn-red" href="{{DELIVERY}}">Order Delivery</a>
+        </div>
+        <div class="notices" id="notices">
+          <p><strong><span class="raw">*</span> Food safety notice.</strong> Consuming raw or undercooked meats, poultry, seafood, shellfish, or eggs may increase your risk of foodborne illness, especially if you have certain medical conditions. Items marked with an asterisk are served raw or undercooked, or contain raw ingredients.</p>
+          <p><strong>Allergies.</strong> Our kitchen handles fish, shellfish, milk, eggs, wheat, soy, peanuts and tree nuts. Please tell us about any allergy before you order. We cannot guarantee any dish is allergen free. Prices and availability can change without notice; our online ordering page always has the current prices.</p>
+        </div>
+      </div>
+    </section>
+
