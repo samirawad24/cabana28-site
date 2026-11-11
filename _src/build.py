@@ -40,14 +40,14 @@ def money(p):
     return f"${p:,.2f}"
 
 
-CAT_COLORS = ["#9E3B22", "#2F6F6A", "#2A1D17", "#A23D63", "#7D5719"]
+CAT_COLORS = ["#D90019", "#2F6F6A", "#2A1D17", "#A23D63", "#7D5719"]
 
 # Photo panels dropped into the menu after these categories
 BREAKS = {
     "family": ("images/pollo-a-la-brasa.jpg", 760, 500, "#2F6F6A", "Pollo a la Brasa",
                "Marinated overnight and roasted on the spit until the skin crackles. Get the whole bird with two sides for the table.",
                "Whole chicken, 2 sides", 26.95, False),
-    "peruvian": ("images/lomo-saltado.jpg", 1600, 1200, "#9E3B22", "Lomo Saltado",
+    "peruvian": ("images/lomo-saltado.jpg", 1600, 1200, "#D90019", "Lomo Saltado",
                  "Tenderloin, red onion and tomato hit a screaming hot wok, then meet the fries and rice. One of our most ordered plates.",
                  "Lomo Saltado", 24.99, False),
     "seafood": ("images/ceviche-mixto.jpg", 1600, 2133, "#A23D63", "Ceviche Mixto",

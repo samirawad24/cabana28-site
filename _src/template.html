@@ -40,8 +40,9 @@
       --ink: #2A1D17;
       --ink-soft: #5E4D42;
       --muted: #74614E;
-      --red: #9E3B22;
-      --red-dark: #7E2D18;
+      --red: #D90019;
+      --logo-red: #FF0113;
+      --red-dark: #A80014;
       --gold: #C2923A;
       --teal: #2F6F6A;
       --rose: #B3446C;
@@ -72,10 +73,10 @@
     .btn-line:hover { background: var(--ink); color: var(--cream); }
 
     /* stripe: the one textile accent */
-    .stripe { height: 8px; background: repeating-linear-gradient(90deg, var(--red) 0 48px, var(--gold) 48px 60px, var(--teal) 60px 96px, var(--cream) 96px 100px, var(--rose) 100px 128px, var(--gold) 128px 140px); }
+    .stripe { height: 8px; background: repeating-linear-gradient(90deg, var(--logo-red) 0 48px, var(--gold) 48px 60px, var(--teal) 60px 96px, var(--cream) 96px 100px, var(--rose) 100px 128px, var(--gold) 128px 140px); }
 
     /* ---------- dish strip ---------- */
-    .strip { background: var(--red); color: var(--cream); overflow: hidden; border-top: 4px solid var(--gold); border-bottom: 4px solid var(--gold); }
+    .strip { background: var(--logo-red); color: var(--cream); overflow: hidden; border-top: 4px solid var(--gold); border-bottom: 4px solid var(--gold); }
     .strip.dark { background: var(--night); border-color: var(--red); }
     .strip-track { display: flex; width: max-content; animation: slide 60s linear infinite; }
     .strip.rev .strip-track { animation-direction: reverse; }
@@ -106,7 +107,7 @@
     .topbar .status-dot { background: #B9A893; }
     .topbar .status.open .status-dot { background: #7FD1A8; box-shadow: 0 0 0 3px rgba(127, 209, 168, .18); }
     .top { position: sticky; top: 0; z-index: 50; background: var(--cream); }
-    .top::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 5px; background: repeating-linear-gradient(90deg, var(--red) 0 48px, var(--gold) 48px 60px, var(--teal) 60px 96px, var(--cream) 96px 100px, var(--rose) 100px 128px, var(--gold) 128px 140px); opacity: 0; transition: opacity .25s; }
+    .top::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 5px; background: repeating-linear-gradient(90deg, var(--logo-red) 0 48px, var(--gold) 48px 60px, var(--teal) 60px 96px, var(--cream) 96px 100px, var(--rose) 100px 128px, var(--gold) 128px 140px); opacity: 0; transition: opacity .25s; }
     .top.scrolled::after { opacity: 1; }
     .top .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; height: 122px; transition: height .25s; }
     .top.scrolled .wrap { height: var(--head-h); }
