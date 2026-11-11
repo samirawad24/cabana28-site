@@ -157,7 +157,7 @@ def fmt(t):
 
 def finish(out, preview):
     if preview:
-        out = out.replace('src="images/', 'src="../images/')
+        out = out.replace('src="images/', 'src="../images/').replace('href="images/', 'href="../images/')
         out = out.replace('content="index, follow"', 'content="noindex, nofollow"')
     return out
 

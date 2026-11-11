@@ -86,15 +86,16 @@ def render(tpl, site, pickup, tel, phone, slug, title, body):
 <body>
   <header class="top scrolled">
     <div class="wrap">
-      <a class="brand" href="index.html" aria-label="Cabaña 28 home">
-        <span class="brand-name">Cabaña 28</span>
-        <span class="brand-sub">Cocina Peruana</span>
-      </a>
-      <nav class="nav" aria-label="Main">
+      <nav class="nav nav-l" aria-label="Main">
         <a href="index.html#menu">Menu</a>
+        <a href="index.html#story">Our Story</a>
         <a href="index.html#visit">Hours &amp; Location</a>
-        <a class="btn btn-red" href="{pickup}">Order Pickup</a>
       </nav>
+      <a class="brand" href="index.html" aria-label="Cabaña 28 home"><img src="images/cabana28-logo.png" alt="Cabaña 28" width="640" height="415"></a>
+      <div class="nav nav-r">
+        <a class="btn btn-line nav-call" href="{tel}">Call</a>
+        <a class="btn btn-red" href="{pickup}">Order Pickup</a>
+      </div>
     </div>
   </header>
   <main class="wrap legal">
@@ -107,7 +108,7 @@ def render(tpl, site, pickup, tel, phone, slug, title, body):
   <footer>
     <div class="wrap">
       <div>
-        <span class="brand-name" style="font-family:var(--serif);font-size:24px">Cabaña 28</span>
+        <img src="images/cabana28-logo.png" alt="Cabaña 28" width="640" height="415" style="height:64px;width:auto" loading="lazy">
         <p style="margin:6px 0 0">6351 N Andrews Ave, Fort Lauderdale, FL 33309 &middot; <a href="{tel}">{phone}</a></p>
       </div>
       <nav aria-label="Footer">
