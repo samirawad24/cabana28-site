@@ -372,14 +372,12 @@
     .drawer-top { display: flex; align-items: center; justify-content: space-between; }
     .drawer-logo img { height: 52px; width: auto; filter: brightness(0) invert(1); }
     .drawer-x { width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--yellow); color: var(--red-dark); font-size: 30px; line-height: 1; cursor: pointer; }
-    .drawer-nav { display: flex; flex-direction: column; gap: 10px; }
-    .drawer-nav > a { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 18px; background: #fff; color: var(--red); border-radius: 6px; box-shadow: 0 3px 0 var(--red-dark); text-decoration: none; transition: background .2s; }
-    .drawer-nav > a:active { transform: translateY(1px); }
-    .drawer-nav > a span { font-family: var(--display); font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: -.01em; }
-    .drawer-nav > a small { font-family: var(--script); font-size: 16px; color: var(--ink-soft); }
-    .drawer-nav > a[aria-current="page"] { background: var(--yellow); box-shadow: 0 3px 0 var(--yellow-deep); }
-    .drawer-nav > a[aria-current="page"] span { color: var(--red-dark); }
-    .drawer-cats { padding: 0 2px 2px; }
+    .drawer-nav { display: flex; flex-direction: column; }
+    .drawer-nav > a { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 2px dashed rgba(255, 255, 255, .25); text-decoration: none; }
+    .drawer-nav > a span { font-family: var(--display); font-weight: 900; font-size: 26px; text-transform: uppercase; letter-spacing: -.01em; }
+    .drawer-nav > a small { font-family: var(--script); font-size: 17px; color: var(--yellow); }
+    .drawer-nav > a[aria-current="page"] span { color: var(--yellow); }
+    .drawer-cats { padding: 10px 0 12px; border-bottom: 2px dashed rgba(255, 255, 255, .25); }
     .drawer-cats summary { cursor: pointer; font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--yellow); padding: 4px 0; }
     .drawer-cats > div { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 10px; }
     .drawer-cats a { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; text-decoration: none; background: rgba(255, 255, 255, .14); padding: 6px 10px; border-radius: 99px; }
