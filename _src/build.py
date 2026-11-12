@@ -12,7 +12,7 @@ DELIVERY = "https://food.orders.co/cabaa28/menu?deliveryOption=delivery"
 EZCATER = "https://www.ezcater.com/"  # swap for the Cabaña 28 ezCater page link when we have it
 DOORDASH = "https://www.doordash.com/store/cabana28-fort-lauderdale-25130447/"
 UBER = "https://www.ubereats.com/store/cabana-28/YuIAFhCmWMiQWB06PUECMw"
-INSTAGRAM = "https://www.instagram.com/"  # swap for the Cabaña 28 Instagram profile link
+INSTAGRAM = "https://www.instagram.com/_cabana28/"
 GOOGLE = "https://www.google.com/maps/search/?api=1&query=Caba%C3%B1a+28+6351+N+Andrews+Ave+Fort+Lauderdale"
 TEL = "tel:+19545305123"
 PHONE = "(954) 530-5123"
