@@ -367,6 +367,7 @@
     body.locked { overflow: hidden; }
     .drawer { position: fixed; inset: 0; z-index: 100; background: rgba(61, 57, 53, .55); }
     .drawer[hidden] { display: none; }
+    .drawer-in:focus { outline: none; }
     .drawer-in { position: absolute; inset: 0 0 0 auto; width: min(420px, 100%); background: var(--red) var(--hatch); color: #fff; overflow-y: auto; padding: 16px 22px calc(28px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 16px; border-bottom: 12px solid var(--yellow); animation: slidein .22s ease-out; }
     @keyframes slidein { from { transform: translateX(30px); opacity: 0; } }
     @media (prefers-reduced-motion: reduce) { .drawer-in { animation: none; } }
@@ -540,7 +541,7 @@
   </header>
 
   <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
-    <div class="drawer-in">
+    <div class="drawer-in" tabindex="-1">
       <div class="drawer-top">
         <a class="drawer-logo" href="index.html" aria-label="Cabaña 28 home"><img src="../images/cabana28-logo.svg" alt="" width="287" height="186"></a>
         <button type="button" class="drawer-x" id="drawer-x" aria-label="Close site menu">&times;</button>
@@ -706,7 +707,7 @@
     function setDrawer(open) {
       drawer.hidden = !open; burger.setAttribute('aria-expanded', open);
       body.classList.toggle('locked', open);
-      if (open) { var f = drawer.querySelector('.drawer-nav a'); if (f) f.focus(); } else { burger.focus(); }
+      if (open) { var f = drawer.querySelector('.drawer-in'); if (f) f.focus({ preventScroll: true }); } else { burger.focus(); }
     }
     burger.addEventListener('click', function () { setDrawer(drawer.hidden); });
     dx.addEventListener('click', function () { setDrawer(false); });
