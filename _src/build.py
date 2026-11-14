@@ -6,7 +6,9 @@ from pathlib import Path
 from menu import MENU
 
 ROOT = Path(__file__).resolve().parent.parent
-SITE = "https://samirawad24.github.io/cabana28-site/"
+SITE = "https://cabana28.com/"
+REST_ID = SITE + "#restaurant"
+AREA = ["Fort Lauderdale", "Oakland Park", "Wilton Manors", "Pompano Beach", "Lauderdale Lakes", "Tamarac"]
 PICKUP = "https://food.orders.co/cabaa28"
 DELIVERY = "https://food.orders.co/cabaa28/menu?deliveryOption=delivery"
 EZCATER = "https://www.ezcater.com/"  # swap for the Cabaña 28 ezCater page link when we have it
@@ -130,6 +132,7 @@ def schema():
     restaurant = {
         "@context": "https://schema.org",
         "@type": "Restaurant",
+        "@id": REST_ID,
         "name": "Cabaña 28",
         "alternateName": "Cabana 28",
         "description": "Family-run Peruvian restaurant in Fort Lauderdale serving pollo a la brasa, lomo saltado, ceviche, chaufa and family meals for dine-in, pickup and delivery.",
@@ -141,13 +144,15 @@ def schema():
         "address": {"@type": "PostalAddress", "streetAddress": "6351 N Andrews Ave",
                     "addressLocality": "Fort Lauderdale", "addressRegion": "FL",
                     "postalCode": "33309", "addressCountry": "US"},
-        "geo": {"@type": "GeoCoordinates", "latitude": 26.2065, "longitude": -80.1420},
+        "geo": {"@type": "GeoCoordinates", "latitude": 26.2040, "longitude": -80.1483},
+        "hasMap": GOOGLE,
+        "areaServed": [{"@type": "City", "name": c + ", FL"} for c in AREA],
+        "sameAs": [INSTAGRAM, DOORDASH, UBER],
         "openingHoursSpecification": [
             {"@type": "OpeningHoursSpecification", "dayOfWeek": days, "opens": o, "closes": c}
             for _, days, o, c in HOURS
         ],
-        "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.7", "reviewCount": "370", "bestRating": "5"},
-        "hasMenu": SITE + "menu.html",
+        "hasMenu": SITE + "menu.html#menu",
         "acceptsReservations": "False",
         "potentialAction": {"@type": "OrderAction", "target": [DELIVERY, PICKUP, DOORDASH, UBER]},
     }
@@ -156,11 +161,72 @@ def schema():
     return json.dumps(restaurant, ensure_ascii=False, indent=2), json.dumps(faq, ensure_ascii=False, indent=2)
 
 
+def menu_schema():
+    sections = []
+    for slug_, es, en, note, items in MENU:
+        its = []
+        for name, desc, price, _ in items:
+            it = {"@type": "MenuItem", "name": name}
+            if desc:
+                it["description"] = desc
+            if price is not None:
+                it["offers"] = {"@type": "Offer", "price": f"{price:.2f}", "priceCurrency": "USD"}
+            its.append(it)
+        sections.append({"@type": "MenuSection", "name": en, "alternateName": es, "hasMenuItem": its})
+    menu = {"@context": "https://schema.org", "@type": "Menu", "@id": SITE + "menu.html#menu",
+            "name": "Cabaña 28 Menu", "url": SITE + "menu.html", "inLanguage": "en",
+            "offeredBy": {"@id": REST_ID}, "hasMenuSection": sections}
+    return json.dumps(menu, ensure_ascii=False, indent=2)
+
+
+def seo_files(dest):
+    from datetime import date
+    today = date.today().isoformat()
+    bots = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "PerplexityBot", "ClaudeBot", "Claude-SearchBot", "Google-Extended"]
+    nl = "\n"
+    robots = "User-agent: *\nAllow: /\n\n" + "".join(f"User-agent: {b}{nl}Allow: /{nl}{nl}" for b in bots) + f"Sitemap: {SITE}sitemap.xml\n"
+    urls = [SITE + ("" if f == "index.html" else f) for f, _, _ in PAGES.values()]
+    urls += [SITE + f"{x}.html" for x in ("privacy", "terms", "accessibility")]
+    sm = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+          + "".join(f"  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>{nl}" for u in urls) + "</urlset>\n")
+    hours = "; ".join(f"{label} {fmt(o)} to {fmt(c)}" for label, _, o, c in HOURS)
+    count = sum(len(c[4]) for c in MENU)
+    llms = f"""# Cabaña 28
+
+> Family-run Peruvian restaurant at 6351 N Andrews Ave, Fort Lauderdale, FL 33309. Known for pollo a la brasa (Peruvian rotisserie chicken), plus lomo saltado, ceviche and chaufa. Dine-in, pickup, delivery and catering.
+
+- Phone: {PHONE}
+- Hours: {hours}
+- Location: N Andrews Ave just north of Cypress Creek Rd, close to {", ".join(AREA[1:])}
+- Menu: {count} dishes with prices, including a kids menu
+
+## Pages
+
+- [Home]({SITE}): what we cook and how to order
+- [Menu]({SITE}menu.html): full menu with prices
+- [Catering]({SITE}catering.html): family trays and catering delivered by our team
+- [Gallery]({SITE}gallery.html): photos of the food and dining room
+- [Hours and location]({SITE}visit.html): hours, map, parking and FAQ
+
+## Order
+
+- [Pickup and delivery (our own ordering page)]({PICKUP})
+- [DoorDash]({DOORDASH})
+- [Uber Eats]({UBER})
+- [Instagram]({INSTAGRAM})
+"""
+    for name, body in (("robots.txt", robots), ("sitemap.xml", sm), ("llms.txt", llms)):
+        (dest / name).write_text(body, encoding="utf-8")
+
+
 FAQS = [
     ("Where is Cabaña 28?", "6351 N Andrews Ave, Fort Lauderdale, FL 33309. There is parking in front of the restaurant."),
     ("What are your hours?", "Monday to Friday 10:30am to 9pm, Saturday 10:15am to 9pm, Sunday 10:15am to 8pm."),
     ("Do you deliver?", "Yes. Order delivery or pickup on our online ordering page, or call us at (954) 530-5123. We are also on DoorDash and Uber Eats."),
     ("What should I order the first time?", "Start with pollo a la brasa and our green ají, then add lomo saltado or a ceviche for the table. Chaufa de pollo a la brasa is a good pick if you are eating alone."),
+    ("What is pollo a la brasa?", "Peruvian rotisserie chicken. The chicken is marinated, then roasted on a rotisserie until the skin turns crisp and dark. We serve it by the quarter, half or whole, with sides and our green ají sauce."),
+    ("Is Cabaña 28 close to Oakland Park and Wilton Manors?", "Yes. We are on N Andrews Ave just north of Cypress Creek Rd, a short drive from Oakland Park, Wilton Manors, Pompano Beach, Lauderdale Lakes and Tamarac. You can also order delivery from our online ordering page, DoorDash or Uber Eats."),
+    ("Do you have a kids menu?", "Yes. Kids can pick salchipollipapas (fries, hot dog and shredded rotisserie chicken), pollipapas (crispy chicken with fries), salchipapas (sausage with fries) or kids pasta with butter or pesto."),
     ("Do you have meals for families and groups?", "Yes. Our family meals start at $26.99 for a whole rotisserie chicken with two sides. For catering, call us at (954) 530-5123 and our own team will deliver it, or find us on ezCater."),
 ]
 
@@ -349,12 +415,13 @@ def main():
         "{{GALLERY_GRID}}": gallery_grid(), "{{GALLERY_PEEK}}": gallery_peek(),
         "{{CATER_ITEMS}}": cater_items(), "{{EZCATER_BLOCK}}": ezcater_block(),
     }
-    extra = {"home": ld(rjson), "visit": ld(fjson)}
+    extra = {"menu": ld(menu_schema()), "visit": ld(fjson)}
     for page in PAGES:
         body = (pages_dir / f"{page}.html").read_text(encoding="utf-8")
         for k, v in fill.items():
             body = body.replace(k, v)
-        out, fname = render(tpl, page, body, extra.get(page, ""))
+        head = ld(rjson) + ("\n" + extra[page] if page in extra else "")
+        out, fname = render(tpl, page, body, head)
         (dest / fname).write_text(finish(out, preview), encoding="utf-8")
     lp = legal.pages(TEL, PHONE)
     for slug_, (title, body) in lp.items():
@@ -362,6 +429,7 @@ def main():
                 f"{title} for the Cabaña 28 website, a Peruvian restaurant in Fort Lauderdale, FL.")
         out, _ = render(tpl, meta, legal.main_html(title, body), legal.CSS)
         (dest / f"{slug_}.html").write_text(finish(out, preview), encoding="utf-8")
+    seo_files(dest)
     print(f"built {dest}: {len(PAGES)} pages, {len(MENU)} categories, {count} dishes, {len(lp)} legal pages")
 
 
