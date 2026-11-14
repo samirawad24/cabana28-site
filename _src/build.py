@@ -280,6 +280,28 @@ def order_logos():
             f'</div>')
 
 
+def intro_svg():
+    """Logo split for the loading intro: lettering, and the chicken (outline + beak + eyes) on its own."""
+    import re
+    src = (ROOT / "images" / "cabana28-logo.svg").read_text(encoding="utf-8")
+    vb = re.search(r'viewBox="([^"]+)"', src).group(1)
+    paths = dict((f, d) for f, d in re.findall(r'<path fill="([^"]+)" d="([^"]+)"', src))
+    red = re.split(r"(?= M )", " " + paths["#E12627"])
+    def top(sp):
+        n = [float(x) for x in re.findall(r"-?\d+\.?\d*", sp)]
+        return min(n[1::2]) if n else 999
+    chick = " ".join(sp.strip() for sp in red if top(sp) < 300)
+    text = " ".join(sp.strip() for sp in red if top(sp) >= 300 and sp.strip())
+    eyes = re.split(r"(?= M )", " " + paths["#3D3936"])
+    eye = "".join(f'<path class="i-eye" fill="#3D3936" d="{d.strip()}"/>' for d in eyes if d.strip())
+    return (f'<svg class="intro-logo" viewBox="{vb}" role="img" aria-label="Cabaña 28">'
+            f'<defs><clipPath id="intro-clip"><rect x="270" y="150" width="320" height="170"/></clipPath></defs>'
+            f'<g clip-path="url(#intro-clip)"><g class="i-rise"><g class="i-chick">'
+            f'<path fill="#E12627" d="{chick}"/><path fill="#F6A909" d="{paths["#F6A909"]}"/>{eye}'
+            f'</g></g></g>'
+            f'<path class="i-text" fill="#E12627" d="{text}"/></svg>')
+
+
 def nav_cats():
     return "\n".join(f'<a href="menu.html#m-{slug_}">{e(en)}</a>' for slug_, _, en, _, _ in MENU)
 
@@ -299,7 +321,7 @@ def render(tpl, page, main_html, head_extra=""):
               .replace("{{DELIVERY}}", DELIVERY).replace("{{PICKUP}}", PICKUP).replace("{{DOORDASH}}", DOORDASH)
               .replace("{{UBER}}", UBER).replace("{{GOOGLE}}", GOOGLE)
               .replace("{{TEL}}", TEL).replace("{{PHONE}}", PHONE)
-              .replace("{{SITE}}", SITE))
+              .replace("{{SITE}}", SITE).replace("{{INTRO_LOGO}}", intro_svg()))
     if isinstance(page, str):
         out = out.replace(f'data-nav="{page}"', f'data-nav="{page}" aria-current="page"')
     assert "{{" not in out, "unreplaced placeholder: " + out[out.index("{{"):out.index("{{") + 40]
