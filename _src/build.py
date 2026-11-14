@@ -216,7 +216,7 @@ def seo_files(dest):
 - [Instagram]({INSTAGRAM})
 """
     for name, body in (("robots.txt", robots), ("sitemap.xml", sm), ("llms.txt", llms)):
-        (dest / name).write_text(body, encoding="utf-8")
+        (dest / name).write_text(clean_urls(body) if CLEAN else body, encoding="utf-8")
 
 
 FAQS = [
@@ -252,7 +252,19 @@ def fmt(t):
     return f"{h}:{m:02d}{suf}" if m else f"{h}{suf}"
 
 
+CLEAN = False  # set by --dist: Cloudflare Pages serves /menu, and 308s /menu.html to it
+
+
+def clean_urls(text):
+    import re
+    text = text.replace('href="index.html"', 'href="/"').replace('href="index.html#', 'href="/#').replace(SITE + "index.html", SITE)
+    text = re.sub(r'href="(\w+)\.html', lambda m: 'href="/' + m.group(1), text)
+    return re.sub(re.escape(SITE) + r'(\w+)\.html', lambda m: SITE + m.group(1), text)
+
+
 def finish(out, preview):
+    if CLEAN:
+        out = clean_urls(out)
     if preview:
         out = out.replace('src="images/', 'src="../images/').replace('href="images/', 'href="../images/')
         out = out.replace('content="index, follow"', 'content="noindex, nofollow"')
@@ -402,7 +414,15 @@ def main():
     import sys
     import legal
     preview = "--preview" in sys.argv
-    dest = ROOT / "v2" if preview else ROOT
+    dist = "--dist" in sys.argv  # clean folder for Cloudflare Pages (cabana28.com)
+    dest = ROOT / "v2" if preview else (ROOT / "dist" if dist else ROOT)
+    if dist:
+        global CLEAN
+        CLEAN = True
+        import shutil
+        shutil.rmtree(dest, ignore_errors=True)
+        dest.mkdir()
+        shutil.copytree(ROOT / "images", dest / "images")
     dest.mkdir(exist_ok=True)
     tabs, sections = build_menu()
     rjson, fjson = schema()
@@ -429,6 +449,13 @@ def main():
                 f"{title} for the Cabaña 28 website, a Peruvian restaurant in Fort Lauderdale, FL.")
         out, _ = render(tpl, meta, legal.main_html(title, body), legal.CSS)
         (dest / f"{slug_}.html").write_text(finish(out, preview), encoding="utf-8")
+    if dist:  # real 404 status on Cloudflare instead of serving the home page
+        body404 = ('<p>We could not find that page. It may have moved.</p>'
+                   '<p><a href="index.html">Go to the home page</a> or <a href="menu.html">see the menu</a>.</p>')
+        out, _ = render(tpl, ("404.html", "Page not found | Cabaña 28", "This page could not be found."),
+                        legal.main_html("Page not found", body404), legal.CSS)
+        out = out.replace("<head>", '<head>\n  <base href="/">', 1).replace('content="index, follow"', 'content="noindex, follow"')
+        (dest / "404.html").write_text(finish(out, preview), encoding="utf-8")
     seo_files(dest)
     print(f"built {dest}: {len(PAGES)} pages, {len(MENU)} categories, {count} dishes, {len(lp)} legal pages")
 
